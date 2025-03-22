@@ -133,7 +133,7 @@ const Payslips = () => {
   return (
     <Box>
       <Flex justify="space-between" align="center" mb={6}>
-        <Heading size="lg">Payroll Management</Heading>
+        <Heading size="lg">Payslip Management</Heading>
         <Button
           leftIcon={<FiPlus />}
           colorScheme="black"

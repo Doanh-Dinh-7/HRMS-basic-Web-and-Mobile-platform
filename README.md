@@ -1,98 +1,126 @@
-# PATTERN PROJECT: REACTJS - FLASK_PYTHON - SQL_SERVER
+# Dự án 3: Hệ thống quản lý nhân sự (HRMS)
 
-Build with Python(Flask) - JavaScript(React) - Database (SQL server)
+### Tác giả: Đinh Sỹ Quốc Doanh
+### Đóng góp: Cao Văn Khánh Duy, Nguyễn Hoàng 
+##
+## Mô tả: Xây dựng hệ thống quản lý nhân sự cho doanh nghiệp nhỏ:	
+- Quản lý thông tin nhân viên, bảng lương, chấm công.
+- Kết nối API để tạo ứng dụng web cho nhân viên và bộ phận nhân sự.
+- Tạo ứng dụng quản lý đơn giản qua giao diện web và ứng dụng di động.
 
-### Run the App Locally
+## Sơ đồ ERD
+<img src="frontend/public/ERD.png"/>
 
-1. Clone the repository:
+## Screenshots
+<img src="frontend/public/Employee.png"/>
+<img src="frontend/public/Timekeeping.png"/>
+<img src="frontend/public/Payslip.png"/>
 
-```bash
-git clone https://github.com/Doanh-Dinh-7/to-do-repo.git
+
+## Yêu cầu hệ thống
+- Python 3.8 trở lên (Flask)
+- Node.js 14 trở lên (ReactJs)
+- SQL Server
+- Git
+
+## 1. Cài đặt Database
+### 1.1. Cài đặt SQL Server
+- Tải và cài đặt SQL Server từ [trang chủ Microsoft](https://www.microsoft.com/en-us/sql-server/sql-server-downloads)
+  - Chọn phiên bản Developer hoặc Express (miễn phí)
+  - Trong quá trình cài đặt, chọn "Basic" để cài đặt nhanh
+  - Ghi nhớ instance name (mặc định là SQLEXPRESS)
+
+- Tải và cài đặt SQL Server Management Studio (SSMS) từ [đây](https://docs.microsoft.com/en-us/sql/ssms/download-sql-server-management-studio-ssms)
+
+### 1.2. Cấu hình SQL Server
+1. Mở SQL Server Configuration Manager:
+   - Bật SQL Server Browser
+   - Bật TCP/IP trong SQL Server Network Configuration
+   - Restart SQL Server service
+
+2. Mở SSMS và kết nối với instance:
+   - Server name: `localhost` hoặc `.\SQLEXPRESS`
+   - Authentication: Windows Authentication hoặc SQL Server Authentication
+
+### 1.3. Tạo Database
+```sql
+-- Tạo database
+CREATE DATABASE HRMS;
+GO
+
+-- Sử dụng database
+USE HRMS;
+GO
+
+-- Chạy ScriptTaoDatabase.sql
 ```
 
-2. Navigate to the project directory:
-
-```bash
-cd deadline-store
+### 1.4. Import dữ liệu DUMP
+```sql
+-- Chạy các hàm và thủ tục trong TaoDataDump.sql
 ```
 
-3. Navigate to the backend directory:
+### 1.5. Cấu hình kết nối trong Backend
+Sửa file `.env` trong thư mục `backend`:
+```env
+DB_DRIVER=ODBC Driver 17 for SQL Server
+DB_SERVER=SQLEXPRESS  # hoặc tên SERVER của bạn
+DB_NAME=HRMS
+DB_USER=sa              # hoặc tài khoản SQL của bạn
+DB_PASSWORD=your_password
+DB_TRUST=yes           # Windows Authentication
+```
 
+## 2. Cài đặt Backend
+### 2.1. Clone dự án
 ```bash
+git clone <repository_url>
 cd backend
 ```
 
-4. Create a virtual environment:
-
--   On macOS and Linux:
-
+### 2.2. Tạo môi trường ảo Python
 ```bash
-python3 -m venv venv
-```
-
--   On Windows:
-
-```bash
+# Windows
 python -m venv venv
-```
+venv\Scripts\activate
 
-5. Activate the virtual environment:
-
--   On macOS and Linux:
-
-```bash
+# Linux/Mac
+python3 -m venv venv
 source venv/bin/activate
 ```
 
--   On Windows:
-
+### 2.3. Cài đặt thư viện Python
 ```bash
-venv\Scripts\activate
-```
-
-6. Install the dependencies:
-
--   On macOS and Linux:
-
-```bash
-pip3 install -r requirements.txt
-```
-
--   On Windows:
-
-```bash
+cd backend
 pip install -r requirements.txt
 ```
 
-7. Navigate to the frontend directory:
-
+### 2.6. Khởi động backend server
 ```bash
-cd ../frontend
+flask run --reload 
 ```
+Backend server sẽ chạy tại: http://localhost:5000
 
-8. Install the dependencies:
-
+## 3. Cài đặt Frontend
+### 3.1. Cài đặt dependencies
 ```bash
+cd frontend
 npm install
 ```
 
-9. Build the frontend:
-
-```bash
-npm run build
+### 3.2. Cấu hình môi trường
+Tạo file `.env` trong thư mục `frontend`:
+```env
+VITE_API_BASE_URL=http://localhost:5000/api
 ```
 
-10. Navigate to the backend directory:
-
+### 3.3. Khởi động frontend server
 ```bash
-cd ../backend
+# Development
+npm run dev
 ```
+Frontend server sẽ chạy tại: http://localhost:3000
 
-11. Run the Flask app:
+## 4. Kiểm tra hệ thống
+Truy cập http://localhost:3000
 
-```bash
-flask run 
-
-#or
-flask run --reload
-```
