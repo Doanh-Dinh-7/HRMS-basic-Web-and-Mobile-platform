@@ -1,11 +1,11 @@
 import pyodbc
 # Thay đổi các thông số bên dưới để phù hợp với thông tin SQL Server của bạn
-server = 'ACERN5\SERVER'
-database = 'TechZen'
+server = 'ACERN5'
+database = 'HRMS'
 username = 'sa'
 password = '1111'
 # Chuỗi kết nối với SQL SERVER Authentication
-connection_string = f'DRIVER={{SQL Server}};SERVER={server};DATABASE={database};UID={username};PWD={password};Trusted_Connection=yes;'
+connection_string = f'DRIVER={{ODBC Driver 17 for SQL Server}};SERVER={server};DATABASE={database};UID={username};PWD={password};Trusted_Connection=yes;Connection Timeout=30;'
 
 # Hàm Tạo kết nối đến database
 def get_db_connection():
@@ -39,7 +39,7 @@ if __name__ == '__main__':
     cursor = conn.cursor()
 
     # Thực hiện truy vấn
-    cursor.execute("SELECT * FROM Sach")
+    cursor.execute("SELECT * FROM employee")
     for row in cursor.fetchall():
         print(row)
 
