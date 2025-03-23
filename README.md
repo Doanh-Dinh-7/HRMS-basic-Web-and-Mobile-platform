@@ -97,7 +97,11 @@ pip install -r requirements.txt
 
 ### 2.6. Khởi động backend server
 ```bash
-flask run --reload 
+# Development
+flask run --reload
+
+# Host to Android App local
+flask run --host=0.0.0.0 --port=5000
 ```
 Backend server sẽ chạy tại: http://localhost:5000
 
