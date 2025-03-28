@@ -12,10 +12,21 @@
 <img src="frontend/public/ERD.png"/>
 
 ## Screenshots
+### Web app
 <img src="frontend/public/Employee.png"/>
 <img src="frontend/public/Timekeeping.png"/>
 <img src="frontend/public/Payslip.png"/>
 
+### Mobile app
+<table width="100%">
+  <tbody>
+    <tr>
+      <td width="1%"><img src="frontend/public/Employee_MB.png"/></td>
+      <td width="1%"><img src="frontend/public/Timekeeping_MB.png"/></td>
+      <td width="1%"><img src="frontend/public/Payslip_MB.png"/></td>
+    </tr>
+  </tbody>
+</table>
 
 ## Yêu cầu hệ thống
 - Python 3.8 trở lên (Flask)
