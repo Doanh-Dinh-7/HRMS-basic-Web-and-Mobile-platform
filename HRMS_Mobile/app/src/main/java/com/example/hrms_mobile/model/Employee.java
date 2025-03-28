@@ -1,29 +1,61 @@
 package com.example.hrms_mobile.model;
 
 import java.util.Date;
+import com.google.gson.annotations.SerializedName;
 
 public class Employee {
-    private String employeeID;
+    @SerializedName("employeeID")
+    private String employeeId;
+
+    @SerializedName("fullName")
     private String fullName;
-    private String email;
-    private String phoneNumber;
+
+    @SerializedName("position")
     private String position;
-    private String department;
-    private String manager;
-    private String avatar;
+
+    @SerializedName("departmentName")
+    private String departmentName;
+
+    @SerializedName("gender")
+    private String gender;
+
+    @SerializedName("dateOfBirth")
+    private String dateOfBirth;
+
+    @SerializedName("nationality")
+    private String nationality;
+
+    @SerializedName("nationalIDNumber")
+    private String nationalIDNumber;
+
+    @SerializedName("phoneNumber")
+    private String phoneNumber;
+
+    @SerializedName("healthInsurance")
+    private String healthInsurance;
+
+    @SerializedName("address")
+    private String address;
+
+    @SerializedName("bankAccountNumber")
+    private String bankAccountNumber;
+
+    @SerializedName("bankName")
+    private String bankName;
+
+    @SerializedName("status")
+    private String status;
 
     // Thêm các trường mới
-    private String gender;
-    private Date dateOfBirth;
-    private String nationality;
+    private String email;
+    private String manager;
+    private String avatar;
     private String idNumber;
     private String healthInsuranceNumber;
-    private String address;
     private String country;
     private String city;
     private String state;
     private String postalCode;
-    private String bankName;
     private String accountName;
     private String accountNumber;
     private String branch;
@@ -38,13 +70,14 @@ public class Employee {
         // Default constructor
     }
 
-    public Employee(String employeeID, String fullName, String email, String phoneNumber, String position, String department, String manager, String avatar) {
-        this.employeeID = employeeID;
+    public Employee(String employeeID, String fullName, String email, String phoneNumber, String position,
+            String department, String manager, String avatar) {
+        this.employeeId = employeeID;
         this.fullName = fullName;
         this.email = email != null ? email : ""; // Đảm bảo không null
         this.phoneNumber = phoneNumber;
         this.position = position;
-        this.department = department;
+        this.departmentName = department;
         this.manager = manager;
         this.avatar = avatar != null ? avatar : ""; // Đảm bảo không null
         this.active = true;
@@ -52,25 +85,25 @@ public class Employee {
 
     // Constructor đầy đủ với các trường mới
     public Employee(String employeeID, String fullName, String email, String phoneNumber, String position,
-                    String department, String manager, String avatar, String gender, Date dateOfBirth,
-                    String nationality, String idNumber, String healthInsuranceNumber, String address,
-                    String country, String city, String state, String postalCode, String bankName,
-                    String accountName, String accountNumber, String branch, String swift, String iban,
-                    String emergencyContactName, String emergencyContactRelationship, String emergencyContactPhone,
-                    boolean active) {
-        this.employeeID = employeeID;
+            String department, String manager, String avatar, String gender, String dateOfBirth,
+            String nationality, String idNumber, String healthInsuranceNumber, String address,
+            String country, String city, String state, String postalCode, String bankName,
+            String accountName, String accountNumber, String branch, String swift, String iban,
+            String emergencyContactName, String emergencyContactRelationship, String emergencyContactPhone,
+            boolean active) {
+        this.employeeId = employeeID;
         this.fullName = fullName;
         this.email = email;
         this.phoneNumber = phoneNumber;
         this.position = position;
-        this.department = department;
+        this.departmentName = department;
         this.manager = manager;
         this.avatar = avatar;
         this.gender = gender;
         this.dateOfBirth = dateOfBirth;
         this.nationality = nationality;
-        this.idNumber = idNumber;
-        this.healthInsuranceNumber = healthInsuranceNumber;
+        this.nationalIDNumber = idNumber;
+        this.healthInsurance = healthInsuranceNumber;
         this.address = address;
         this.country = country;
         this.city = city;
@@ -78,7 +111,7 @@ public class Employee {
         this.postalCode = postalCode;
         this.bankName = bankName;
         this.accountName = accountName;
-        this.accountNumber = accountNumber;
+        this.bankAccountNumber = accountNumber;
         this.branch = branch;
         this.swift = swift;
         this.iban = iban;
@@ -89,12 +122,12 @@ public class Employee {
     }
 
     // Getters and Setters
-    public String getId() {
-        return employeeID;
+    public String getEmployeeId() {
+        return employeeId;
     }
 
-    public void setId(String employeeID) {
-        this.employeeID = employeeID;
+    public void setEmployeeId(String employeeID) {
+        this.employeeId = employeeID;
     }
 
     public String getFullName() {
@@ -129,12 +162,12 @@ public class Employee {
         this.position = position;
     }
 
-    public String getDepartment() {
-        return department;
+    public String getDepartmentName() {
+        return departmentName;
     }
 
-    public void setDepartment(String department) {
-        this.department = department;
+    public void setDepartmentName(String department) {
+        this.departmentName = department;
     }
 
     public String getManager() {
@@ -161,11 +194,11 @@ public class Employee {
         this.gender = gender;
     }
 
-    public Date getDateOfBirth() {
+    public String getDateOfBirth() {
         return dateOfBirth;
     }
 
-    public void setDateOfBirth(Date dateOfBirth) {
+    public void setDateOfBirth(String dateOfBirth) {
         this.dateOfBirth = dateOfBirth;
     }
 
@@ -177,20 +210,20 @@ public class Employee {
         this.nationality = nationality;
     }
 
-    public String getIdNumber() {
-        return idNumber;
+    public String getNationalIDNumber() {
+        return nationalIDNumber;
     }
 
-    public void setIdNumber(String idNumber) {
-        this.idNumber = idNumber;
+    public void setNationalIDNumber(String idNumber) {
+        this.nationalIDNumber = idNumber;
     }
 
     public String getHealthInsuranceNumber() {
-        return healthInsuranceNumber;
+        return healthInsurance;
     }
 
     public void setHealthInsuranceNumber(String healthInsuranceNumber) {
-        this.healthInsuranceNumber = healthInsuranceNumber;
+        this.healthInsurance = healthInsuranceNumber;
     }
 
     public String getAddress() {
@@ -250,11 +283,11 @@ public class Employee {
     }
 
     public String getAccountNumber() {
-        return accountNumber;
+        return bankAccountNumber;
     }
 
     public void setAccountNumber(String accountNumber) {
-        this.accountNumber = accountNumber;
+        this.bankAccountNumber = accountNumber;
     }
 
     public String getBranch() {
@@ -312,5 +345,12 @@ public class Employee {
     public void setActive(boolean active) {
         this.active = active;
     }
-}
 
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
+    }
+}

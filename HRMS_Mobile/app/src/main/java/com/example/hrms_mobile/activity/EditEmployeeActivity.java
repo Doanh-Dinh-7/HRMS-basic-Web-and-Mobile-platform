@@ -14,9 +14,12 @@ import com.example.hrms_mobile.model.Employee;
 import com.example.hrms_mobile.util.DateTimeUtil;
 import com.google.android.material.textfield.TextInputEditText;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.Map;
 
 public class EditEmployeeActivity extends AppCompatActivity {
@@ -28,7 +31,7 @@ public class EditEmployeeActivity extends AppCompatActivity {
     private Button btnSave;
 
     private String employeeId;
-    private Date selectedDateOfBirth;
+    private String selectedDateOfBirth;
     private Map<String, Employee> employeesMap; // Simulating a database
 
     @Override
@@ -106,30 +109,35 @@ public class EditEmployeeActivity extends AppCompatActivity {
     }
 
     private void showDatePickerDialog() {
-        final Calendar calendar = Calendar.getInstance();
-        if (selectedDateOfBirth != null) {
-            calendar.setTime(selectedDateOfBirth);
+        // Tạo định dạng ngày tháng
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
+        Calendar calendar = Calendar.getInstance();
+
+        try {
+            // Chuyển đổi String thành Date
+            if (selectedDateOfBirth != null && !selectedDateOfBirth.isEmpty()) {
+                Date date = sdf.parse(selectedDateOfBirth);
+                calendar.setTime(date);
+            }
+
+            int year = calendar.get(Calendar.YEAR);
+            int month = calendar.get(Calendar.MONTH);
+            int day = calendar.get(Calendar.DAY_OF_MONTH);
+
+            DatePickerDialog datePickerDialog = new DatePickerDialog(
+                    this,
+                    (view, selectedYear, selectedMonth, selectedDay) -> {
+                        calendar.set(selectedYear, selectedMonth, selectedDay);
+                        selectedDateOfBirth = sdf.format(calendar.getTime());
+                        etDateOfBirth.setText(selectedDateOfBirth);
+                    },
+                    year, month, day);
+            datePickerDialog.show();
+        } catch (ParseException e) {
+            // Xử lý lỗi parse date
+            Toast.makeText(this, "Lỗi định dạng ngày tháng", Toast.LENGTH_SHORT).show();
+            e.printStackTrace();
         }
-
-        int year = calendar.get(Calendar.YEAR);
-        int month = calendar.get(Calendar.MONTH);
-        int day = calendar.get(Calendar.DAY_OF_MONTH);
-
-        DatePickerDialog datePickerDialog = new DatePickerDialog(
-                this,
-                (view, selectedYear, selectedMonth, selectedDay) -> {
-                    Calendar selectedCalendar = Calendar.getInstance();
-                    selectedCalendar.set(selectedYear, selectedMonth, selectedDay);
-                    selectedDateOfBirth = selectedCalendar.getTime();
-                    etDateOfBirth.setText(DateTimeUtil.formatDate(selectedDateOfBirth));
-                },
-                year, month, day
-        );
-
-        // Set max date to today
-        datePickerDialog.getDatePicker().setMaxDate(System.currentTimeMillis());
-
-        datePickerDialog.show();
     }
 
     private void setupSampleData() {
@@ -137,11 +145,12 @@ public class EditEmployeeActivity extends AppCompatActivity {
         employeesMap = new HashMap<>();
 
         // Employee 1 - Nguyễn Văn An
-        Employee nguyenVanAn = new Employee("1", "Nguyễn Văn An", "an@example.com", "0987654321", "IT Specialist", "IT", "John Smith", "");
+        Employee nguyenVanAn = new Employee("1", "Nguyễn Văn An", "an@example.com", "0987654321", "IT Specialist", "IT",
+                "John Smith", "");
         nguyenVanAn.setGender("Male");
-        nguyenVanAn.setDateOfBirth(DateTimeUtil.parseDate("15/05/1990"));
+        nguyenVanAn.setDateOfBirth("15/05/1990");
         nguyenVanAn.setNationality("Vietnam");
-        nguyenVanAn.setIdNumber("001090012345");
+        nguyenVanAn.setNationalIDNumber("001090012345");
         nguyenVanAn.setHealthInsuranceNumber("SH0123456789");
         nguyenVanAn.setAddress("123 Le Loi Street, District 1");
         nguyenVanAn.setCountry("Vietnam");
@@ -155,11 +164,12 @@ public class EditEmployeeActivity extends AppCompatActivity {
         employeesMap.put("1", nguyenVanAn);
 
         // Employee 2 - Trần Thị Bình
-        Employee tranThiBinh = new Employee("2", "Trần Thị Bình", "binh@example.com", "0876543210", "UX Designer", "Design", "John Smith", "");
+        Employee tranThiBinh = new Employee("2", "Trần Thị Bình", "binh@example.com", "0876543210", "UX Designer",
+                "Design", "John Smith", "");
         tranThiBinh.setGender("Female");
-        tranThiBinh.setDateOfBirth(DateTimeUtil.parseDate("20/08/1992"));
+        tranThiBinh.setDateOfBirth("20/08/1992");
         tranThiBinh.setNationality("Vietnam");
-        tranThiBinh.setIdNumber("001092023456");
+        tranThiBinh.setNationalIDNumber("001092023456");
         tranThiBinh.setHealthInsuranceNumber("SH0234567890");
         tranThiBinh.setAddress("456 Nguyen Hue Street, District 1");
         tranThiBinh.setCountry("Vietnam");
@@ -173,11 +183,12 @@ public class EditEmployeeActivity extends AppCompatActivity {
         employeesMap.put("2", tranThiBinh);
 
         // Employee 3 - Lê Văn Cường
-        Employee leVanCuong = new Employee("3", "Lê Văn Cường", "cuong@example.com", "0987654320", "Developer", "IT", "John Smith", "");
+        Employee leVanCuong = new Employee("3", "Lê Văn Cường", "cuong@example.com", "0987654320", "Developer", "IT",
+                "John Smith", "");
         leVanCuong.setGender("Male");
-        leVanCuong.setDateOfBirth(DateTimeUtil.parseDate("10/03/1988"));
+        leVanCuong.setDateOfBirth("10/03/1988");
         leVanCuong.setNationality("Vietnam");
-        leVanCuong.setIdNumber("001088034567");
+        leVanCuong.setNationalIDNumber("001088034567");
         leVanCuong.setHealthInsuranceNumber("SH0345678901");
         leVanCuong.setAddress("789 Ly Tu Trong Street, District 1");
         leVanCuong.setCountry("Vietnam");
@@ -191,11 +202,12 @@ public class EditEmployeeActivity extends AppCompatActivity {
         employeesMap.put("3", leVanCuong);
 
         // Employee 4 - Phạm Thị Dung
-        Employee phamThiDung = new Employee("4", "Phạm Thị Dung", "dung@example.com", "0912345678", "HR Manager", "HR", "John Smith", "");
+        Employee phamThiDung = new Employee("4", "Phạm Thị Dung", "dung@example.com", "0912345678", "HR Manager", "HR",
+                "John Smith", "");
         phamThiDung.setGender("Female");
-        phamThiDung.setDateOfBirth(DateTimeUtil.parseDate("25/11/1985"));
+        phamThiDung.setDateOfBirth("25/11/1985");
         phamThiDung.setNationality("Vietnam");
-        phamThiDung.setIdNumber("001085045678");
+        phamThiDung.setNationalIDNumber("001085045678");
         phamThiDung.setHealthInsuranceNumber("SH0456789012");
         phamThiDung.setAddress("101 Nguyen Du Street, District 1");
         phamThiDung.setCountry("Vietnam");
@@ -209,11 +221,12 @@ public class EditEmployeeActivity extends AppCompatActivity {
         employeesMap.put("4", phamThiDung);
 
         // Employee 5 - Trần Văn Quản
-        Employee tranVanQuan = new Employee("5", "Trần Văn Quản", "quan@example.com", "0861234567", "CEO", "Executive", "", "");
+        Employee tranVanQuan = new Employee("5", "Trần Văn Quản", "quan@example.com", "0861234567", "CEO", "Executive",
+                "", "");
         tranVanQuan.setGender("Male");
-        tranVanQuan.setDateOfBirth(DateTimeUtil.parseDate("05/07/1980"));
+        tranVanQuan.setDateOfBirth("05/07/1980");
         tranVanQuan.setNationality("Vietnam");
-        tranVanQuan.setIdNumber("001080056789");
+        tranVanQuan.setNationalIDNumber("001080056789");
         tranVanQuan.setHealthInsuranceNumber("SH0567890123");
         tranVanQuan.setAddress("202 Dong Khoi Street, District 1");
         tranVanQuan.setCountry("Vietnam");
@@ -229,20 +242,20 @@ public class EditEmployeeActivity extends AppCompatActivity {
 
     private void loadEmployeeData(Employee employee) {
         // Basic information
-        etEmployeeId.setText(employee.getId());
+        etEmployeeId.setText(employee.getEmployeeId());
         etFullName.setText(employee.getFullName());
         etPosition.setText(employee.getPosition());
-        etDepartment.setText(employee.getDepartment());
+        etDepartment.setText(employee.getDepartmentName());
         etManager.setText(employee.getManager());
 
         // Personal information
         etGender.setText(employee.getGender());
         if (employee.getDateOfBirth() != null) {
             selectedDateOfBirth = employee.getDateOfBirth();
-            etDateOfBirth.setText(DateTimeUtil.formatDate(employee.getDateOfBirth()));
+            etDateOfBirth.setText(employee.getDateOfBirth());
         }
         etNationality.setText(employee.getNationality());
-        etIdNumber.setText(employee.getIdNumber());
+        etIdNumber.setText(employee.getNationalIDNumber());
         etEmail.setText(employee.getEmail());
         etPhone.setText(employee.getPhoneNumber());
         etHealthInsurance.setText(employee.getHealthInsuranceNumber());
@@ -263,17 +276,17 @@ public class EditEmployeeActivity extends AppCompatActivity {
         Employee employee = employeesMap.get(employeeId);
         if (employee != null) {
             // Basic information
-            employee.setId(etEmployeeId.getText().toString().trim());
+            employee.setEmployeeId(etEmployeeId.getText().toString().trim());
             employee.setFullName(etFullName.getText().toString().trim());
             employee.setPosition(etPosition.getText().toString().trim());
-            employee.setDepartment(etDepartment.getText().toString().trim());
+            employee.setDepartmentName(etDepartment.getText().toString().trim());
             employee.setManager(etManager.getText().toString().trim());
 
             // Personal information
             employee.setGender(etGender.getText().toString().trim());
             employee.setDateOfBirth(selectedDateOfBirth);
             employee.setNationality(etNationality.getText().toString().trim());
-            employee.setIdNumber(etIdNumber.getText().toString().trim());
+            employee.setNationalIDNumber(etIdNumber.getText().toString().trim());
             employee.setEmail(etEmail.getText().toString().trim());
             employee.setPhoneNumber(etPhone.getText().toString().trim());
             employee.setHealthInsuranceNumber(etHealthInsurance.getText().toString().trim());
@@ -323,4 +336,3 @@ public class EditEmployeeActivity extends AppCompatActivity {
         return isValid;
     }
 }
-

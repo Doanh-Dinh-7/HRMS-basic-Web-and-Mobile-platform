@@ -28,11 +28,21 @@ public class EmployeeAdapter extends RecyclerView.Adapter<EmployeeAdapter.Employ
     private List<Employee> employeeList;
     private List<Employee> employeeListFull;
     private Context context;
+    private OnItemClickListener listener;
 
-    public EmployeeAdapter(Context context, List<Employee> employeeList) {
+    public interface OnItemClickListener {
+        void onItemClick(Employee employee);
+
+        void onEditClick(Employee employee);
+
+        void onDeleteClick(Employee employee);
+    }
+
+    public EmployeeAdapter(Context context, List<Employee> employeeList, OnItemClickListener listener) {
         this.context = context;
         this.employeeList = employeeList;
         this.employeeListFull = new ArrayList<>(employeeList);
+        this.listener = listener;
     }
 
     @NonNull
@@ -64,7 +74,7 @@ public class EmployeeAdapter extends RecyclerView.Adapter<EmployeeAdapter.Employ
         // Set click listener to open employee details
         holder.itemView.setOnClickListener(v -> {
             Intent intent = new Intent(context, EmployeeDetailsActivity.class);
-            intent.putExtra("EMPLOYEE_ID", employee.getId());
+            intent.putExtra("EMPLOYEE_ID", employee.getEmployeeId());
             context.startActivity(intent);
         });
 
@@ -95,7 +105,6 @@ public class EmployeeAdapter extends RecyclerView.Adapter<EmployeeAdapter.Employ
         return employeeList.size();
     }
 
-
     private Filter employeeFilter = new Filter() {
         @Override
         protected FilterResults performFiltering(CharSequence constraint) {
@@ -107,9 +116,12 @@ public class EmployeeAdapter extends RecyclerView.Adapter<EmployeeAdapter.Employ
                 System.out.println("Filter pattern: " + filterPattern); // In giá trị filterPattern ra log
                 System.out.println("EmployeeListFull size: " + employeeListFull.size());
                 for (Employee employee : employeeListFull) {
-                    if ((employee.getFullName() != null && employee.getFullName().toLowerCase().contains(filterPattern)) ||
-                            (employee.getEmail() != null && employee.getEmail().toLowerCase().contains(filterPattern)) ||
-                            (employee.getPosition() != null && employee.getPosition().toLowerCase().contains(filterPattern))) {
+                    if ((employee.getFullName() != null && employee.getFullName().toLowerCase().contains(filterPattern))
+                            ||
+                            (employee.getEmail() != null && employee.getEmail().toLowerCase().contains(filterPattern))
+                            ||
+                            (employee.getPosition() != null
+                                    && employee.getPosition().toLowerCase().contains(filterPattern))) {
                         filteredList.add(employee);
                     }
                 }
@@ -130,6 +142,7 @@ public class EmployeeAdapter extends RecyclerView.Adapter<EmployeeAdapter.Employ
             }
         }
     };
+
     @Override
     public Filter getFilter() {
         return employeeFilter;
@@ -146,10 +159,10 @@ public class EmployeeAdapter extends RecyclerView.Adapter<EmployeeAdapter.Employ
         public EmployeeViewHolder(@NonNull View itemView) {
             super(itemView);
             ivAvatar = itemView.findViewById(R.id.iv_avatar);
+            ivDelete = itemView.findViewById(R.id.iv_delete);
             tvName = itemView.findViewById(R.id.tv_name);
             tvEmail = itemView.findViewById(R.id.tv_email);
             tvPosition = itemView.findViewById(R.id.tv_position);
-            ivDelete = itemView.findViewById(R.id.iv_delete);
         }
     }
 
@@ -159,4 +172,3 @@ public class EmployeeAdapter extends RecyclerView.Adapter<EmployeeAdapter.Employ
         notifyDataSetChanged();
     }
 }
-

@@ -7,6 +7,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.SearchView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -18,6 +19,7 @@ import com.example.hrms_mobile.R;
 import com.example.hrms_mobile.activity.AddEmployeeActivity;
 import com.example.hrms_mobile.adapter.EmployeeAdapter;
 import com.example.hrms_mobile.model.Employee;
+import com.example.hrms_mobile.model.ApiResponse;
 import com.example.hrms_mobile.network.ApiService;
 import com.example.hrms_mobile.network.RetrofitClient;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
@@ -29,7 +31,7 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-public class EmployeeFragment extends Fragment {
+public class EmployeeFragment extends Fragment implements EmployeeAdapter.OnItemClickListener {
     private RecyclerView recyclerView;
     private EmployeeAdapter adapter;
     private SearchView searchView;
@@ -38,10 +40,12 @@ public class EmployeeFragment extends Fragment {
 
     private List<Employee> employeeList;
     private EmployeeAdapter employeeAdapter;
+    private ApiService apiService;
 
     @Nullable
     @Override
-    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
+            @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_employee, container, false);
 
         recyclerView = view.findViewById(R.id.recycler_view);
@@ -53,13 +57,14 @@ public class EmployeeFragment extends Fragment {
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
 
         // Initialize sample data
-//        employeeList = getSampleEmployees();
+        // employeeList = getSampleEmployees();
         employeeList = new ArrayList<>();
-        employeeAdapter = new EmployeeAdapter(getContext(), employeeList);
+        employeeAdapter = new EmployeeAdapter(getContext(), employeeList, this);
         recyclerView.setAdapter(employeeAdapter);
 
         // Fetch employees from the API
-        fetchEmployees();
+        apiService = RetrofitClient.getClient().create(ApiService.class);
+        loadEmployees();
 
         // Set employee count
         updateEmployeeCount();
@@ -96,36 +101,48 @@ public class EmployeeFragment extends Fragment {
         tvEmployeeCount.setText(String.format("Showing %d of %d employees", totalEmployees, employeeList.size()));
     }
 
-//    private List<Employee> getSampleEmployees() {
-//        // Sample data for demonstration
-//        List<Employee> employees = new ArrayList<>();
-//        employees.add(new Employee("1", "Nguyễn Văn An", "an@example.com", "0987654321", "IT Specialist", "IT", "John Smith", ""));
-//        employees.add(new Employee("2", "Trần Thị Bình", "binh@example.com", "0876543210", "UX Designer", "Design", "John Smith", ""));
-//        employees.add(new Employee("3", "Lê Văn Cường", "cuong@example.com", "0987654320", "Developer", "IT", "John Smith", ""));
-//        employees.add(new Employee("4", "Phạm Thị Dung", "dung@example.com", "0912345678", "HR Manager", "HR", "John Smith", ""));
-//        employees.add(new Employee("5", "Trần Văn Quản", "quan@example.com", "0861234567", "CEO", "Executive", "", ""));
-//
-//        // Add 10 more sample employees with Vietnamese names but English positions
-//        employees.add(new Employee("6", "Hoàng Thị Hương", "huong@example.com", "0987654311", "Marketing Manager", "Marketing", "John Smith", ""));
-//        employees.add(new Employee("7", "Vũ Đình Minh", "minh@example.com", "0987654312", "Data Analyst", "IT", "Lê Văn Cường", ""));
-//        employees.add(new Employee("8", "Nguyễn Thị Lan", "lan@example.com", "0987654313", "Graphic Designer", "Design", "Trần Thị Bình", ""));
-//        employees.add(new Employee("9", "Đỗ Văn Tùng", "tung@example.com", "0987654314", "Financial Analyst", "Finance", "John Smith", ""));
-//        employees.add(new Employee("10", "Lê Thị Mai", "mai@example.com", "0987654315", "Customer Support", "Support", "Phạm Thị Dung", ""));
-//        employees.add(new Employee("11", "Nguyễn Văn Hùng", "hung@example.com", "0987654316", "Sales Representative", "Sales", "John Smith", ""));
-//        employees.add(new Employee("12", "Trần Thị Thảo", "thao@example.com", "0987654317", "Product Manager", "Product", "John Smith", ""));
-//        employees.add(new Employee("13", "Phạm Văn Đức", "duc@example.com", "0987654318", "QA Engineer", "IT", "Lê Văn Cường", ""));
-//        employees.add(new Employee("14", "Nguyễn Thị Hà", "ha@example.com", "0987654319", "Content Editor", "Marketing", "Hoàng Thị Hương", ""));
-//        employees.add(new Employee("15", "Lê Văn Thành", "thanh@example.com", "0987654320", "System Administrator", "IT", "Lê Văn Cường", ""));
-//
-//        return employees;
-//    }
-    private void fetchEmployees() {
-        ApiService apiService = RetrofitClient.getClient().create(ApiService.class);
-        Call<List<Employee>> call = apiService.getEmployees();
-
-        call.enqueue(new Callback<List<Employee>>() {
+    // private List<Employee> getSampleEmployees() {
+    // // Sample data for demonstration
+    // List<Employee> employees = new ArrayList<>();
+    // employees.add(new Employee("1", "Nguyễn Văn An", "an@example.com",
+    // "0987654321", "IT Specialist", "IT", "John Smith", ""));
+    // employees.add(new Employee("2", "Trần Thị Bình", "binh@example.com",
+    // "0876543210", "UX Designer", "Design", "John Smith", ""));
+    // employees.add(new Employee("3", "Lê Văn Cường", "cuong@example.com",
+    // "0987654320", "Developer", "IT", "John Smith", ""));
+    // employees.add(new Employee("4", "Phạm Thị Dung", "dung@example.com",
+    // "0912345678", "HR Manager", "HR", "John Smith", ""));
+    // employees.add(new Employee("5", "Trần Văn Quản", "quan@example.com",
+    // "0861234567", "CEO", "Executive", "", ""));
+    //
+    // // Add 10 more sample employees with Vietnamese names but English positions
+    // employees.add(new Employee("6", "Hoàng Thị Hương", "huong@example.com",
+    // "0987654311", "Marketing Manager", "Marketing", "John Smith", ""));
+    // employees.add(new Employee("7", "Vũ Đình Minh", "minh@example.com",
+    // "0987654312", "Data Analyst", "IT", "Lê Văn Cường", ""));
+    // employees.add(new Employee("8", "Nguyễn Thị Lan", "lan@example.com",
+    // "0987654313", "Graphic Designer", "Design", "Trần Thị Bình", ""));
+    // employees.add(new Employee("9", "Đỗ Văn Tùng", "tung@example.com",
+    // "0987654314", "Financial Analyst", "Finance", "John Smith", ""));
+    // employees.add(new Employee("10", "Lê Thị Mai", "mai@example.com",
+    // "0987654315", "Customer Support", "Support", "Phạm Thị Dung", ""));
+    // employees.add(new Employee("11", "Nguyễn Văn Hùng", "hung@example.com",
+    // "0987654316", "Sales Representative", "Sales", "John Smith", ""));
+    // employees.add(new Employee("12", "Trần Thị Thảo", "thao@example.com",
+    // "0987654317", "Product Manager", "Product", "John Smith", ""));
+    // employees.add(new Employee("13", "Phạm Văn Đức", "duc@example.com",
+    // "0987654318", "QA Engineer", "IT", "Lê Văn Cường", ""));
+    // employees.add(new Employee("14", "Nguyễn Thị Hà", "ha@example.com",
+    // "0987654319", "Content Editor", "Marketing", "Hoàng Thị Hương", ""));
+    // employees.add(new Employee("15", "Lê Văn Thành", "thanh@example.com",
+    // "0987654320", "System Administrator", "IT", "Lê Văn Cường", ""));
+    //
+    // return employees;
+    // }
+    private void loadEmployees() {
+        apiService.getEmployees().enqueue(new Callback<List<Employee>>() {
             @Override
-            public void onResponse(@NonNull Call<List<Employee>> call, @NonNull Response<List<Employee>> response) {
+            public void onResponse(Call<List<Employee>> call, Response<List<Employee>> response) {
                 if (response.isSuccessful() && response.body() != null) {
                     employeeList.clear();
                     employeeList.addAll(response.body());
@@ -138,9 +155,8 @@ public class EmployeeFragment extends Fragment {
             }
 
             @Override
-            public void onFailure(@NonNull Call<List<Employee>> call, @NonNull Throwable t) {
-                // Handle failure (e.g., show a toast or log the error)
-                t.printStackTrace();
+            public void onFailure(Call<List<Employee>> call, Throwable t) {
+                Toast.makeText(getContext(), "Lỗi khi tải danh sách nhân viên", Toast.LENGTH_SHORT).show();
             }
         });
     }
@@ -148,11 +164,70 @@ public class EmployeeFragment extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
-        // Refresh data when coming back to this fragment (after adding/editing an employee)
-//        employeeList = getSampleEmployees();
-        fetchEmployees();
+        // Refresh data when coming back to this fragment (after adding/editing an
+        // employee)
+        // employeeList = getSampleEmployees();
+        loadEmployees();
         employeeAdapter.updateData(employeeList);
         updateEmployeeCount();
     }
-}
 
+    @Override
+    public void onItemClick(Employee employee) {
+        apiService.getEmployeeDetail(employee.getEmployeeId()).enqueue(new Callback<Employee>() {
+            @Override
+            public void onResponse(Call<Employee> call, Response<Employee> response) {
+                if (response.isSuccessful() && response.body() != null) {
+                    // Hiển thị dialog chi tiết nhân viên
+                    showEmployeeDetailDialog(response.body());
+                }
+            }
+
+            @Override
+            public void onFailure(Call<Employee> call, Throwable t) {
+                Toast.makeText(getContext(), "Lỗi khi tải chi tiết nhân viên", Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+
+    @Override
+    public void onEditClick(Employee employee) {
+        // Hiển thị dialog chỉnh sửa nhân viên
+        showEditEmployeeDialog(employee);
+    }
+
+    @Override
+    public void onDeleteClick(Employee employee) {
+        // Hiển thị dialog xác nhận xóa
+        showDeleteConfirmationDialog(employee);
+    }
+
+    private void showEmployeeDetailDialog(Employee employee) {
+        // TODO: Implement employee detail dialog
+    }
+
+    private void showEditEmployeeDialog(Employee employee) {
+        // TODO: Implement edit employee dialog
+    }
+
+    private void showDeleteConfirmationDialog(Employee employee) {
+        // TODO: Implement delete confirmation dialog
+    }
+
+    private void deleteEmployee(Employee employee) {
+        apiService.deleteEmployee(employee.getEmployeeId()).enqueue(new Callback<ApiResponse>() {
+            @Override
+            public void onResponse(Call<ApiResponse> call, Response<ApiResponse> response) {
+                if (response.isSuccessful() && response.body() != null && response.body().isSuccess()) {
+                    Toast.makeText(getContext(), "Xóa nhân viên thành công", Toast.LENGTH_SHORT).show();
+                    loadEmployees();
+                }
+            }
+
+            @Override
+            public void onFailure(Call<ApiResponse> call, Throwable t) {
+                Toast.makeText(getContext(), "Lỗi khi xóa nhân viên", Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+}
