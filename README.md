@@ -31,6 +31,7 @@
 ## Yêu cầu hệ thống
 - Python 3.8 trở lên (Flask)
 - Node.js 14 trở lên (ReactJs)
+- Java
 - SQL Server
 - Git
 
