@@ -8,6 +8,10 @@
 - Kết nối API để tạo ứng dụng web cho nhân viên và bộ phận nhân sự.
 - Tạo ứng dụng quản lý đơn giản qua giao diện web và ứng dụng di động.
 
+## Git Diagram
+<img src="frontend/public/HRMS-Web-Mobile.png"/>
+
+
 ## Sơ đồ ERD
 <img src="frontend/public/ERD.png"/>
 
